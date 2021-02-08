@@ -34,13 +34,13 @@ const DEFAULT_CONFIG: DefaultConfig = {
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms));
 
-function getDistanceToTarget(x: number, y: number, z: number, radius: number): number {
+function getDistanceToTarget(x: number, y: number, z: number): number {
   const [playerX, playerY , playerZ] = GetEntityCoords(PlayerPedId(), false);
   return Vdist2(playerX, playerY, playerZ, x, y, z);
 }
 
 function getRetryIncrement(delta) {
-  if (delta > 5) return INTERVAL_INCREMENT;
+  if (delta > 3) return INTERVAL_INCREMENT;
   if (delta < 0) return -INTERVAL_INCREMENT;
   return 0;
 }
@@ -56,7 +56,7 @@ function getRetryTime(currentInterval, radius, distance, previousDistance, retry
   return newInterval > MAX_BACKOFF_TIME ? MAX_BACKOFF_TIME : newInterval;
 }
 
-function draw(config: Config) {
+function draw3DText(config: Config) {
   const { x, y, z, font, rgb, textOutline, text, perspectiveScale, scaleMultiplier } = config;
   const [onScreen, _x, _y] = World3dToScreen2d(x, y, z);
   if (!onScreen) return;
@@ -81,37 +81,58 @@ function draw(config: Config) {
   DrawText(_x, _y)
 }
 
+async function setDelay(interval): Promise<number> {
+  if (interval > 0) {
+    await delay(interval);
+    return 1;
+  }
+  return 0;
+}
 
-export function Draw3DTextPermanent(config?: Config): void {
+
+function draw3DTextLoop(config?: Config, useTimeout = false): void {
   const _config = {...DEFAULT_CONFIG, ...config};
   const { x, y, z, radius } = _config;
 
-  let _interval = MIN_BACKOFF_TIME;
-  let _retryCount = 0;
-  let _previousDistanceToTarget = 0;
-  let _distanceToTarget = 0;
+  let interval = MIN_BACKOFF_TIME;
+  let retryCount = 0;
+  let previousDistanceToTarget = 0;
+  let distanceToTarget = 0;
 
-  setTick(async () => {
-    if (_interval) {
-      await delay(_interval);
-      _retryCount += 1;
+  let timeoutFinished = false;
+
+  setTick(async (): Promise<void> => {
+    previousDistanceToTarget = distanceToTarget;
+    distanceToTarget = getDistanceToTarget(x, y, z);
+    if (distanceToTarget >= radius) {  // we're out of range
+      interval = getRetryTime(interval, radius, distanceToTarget, previousDistanceToTarget, retryCount);
+      retryCount += await setDelay(interval);
+      if (timeoutFinished === true) {
+        timeoutFinished = false;
+      }
+    } else { // we're in range
+      interval = 0;
+      retryCount = 0;
+
+      if (useTimeout) {
+        if (timeoutFinished) return;
+        setTimeout(() => {
+          timeoutFinished = true;
+        }, _config.timeout);
+      }
+  
+      draw3DText(_config);
     }
-
-    _previousDistanceToTarget = _distanceToTarget;
-    _distanceToTarget = getDistanceToTarget(x, y, z, radius);
-    console.log(_interval, _distanceToTarget);
-    const isWithinRange = _distanceToTarget <= radius;
-    if (!isWithinRange) {
-      _interval = getRetryTime(_interval, radius, _distanceToTarget, _previousDistanceToTarget, _retryCount);
-      return;
-    }
-
-    // we're in range of the target
-    _retryCount = 0;
-    _interval = 0;
-
-    draw(_config);
   });
+}
+
+
+export function draw3DTextPermanent(config?: Config): void {
+  return draw3DTextLoop(config);
+}
+
+export function draw3DTextTimeout(config?: Config): void {
+  return draw3DTextLoop(config, true);
 }
 
 
@@ -123,7 +144,7 @@ async function testDraw() {
     text: 'Test',
     radius: 15,
   }
-  Draw3DTextPermanent(config);
+  draw3DTextTimeout(config);
 }
 
 RegisterCommand('draw', testDraw, false);
