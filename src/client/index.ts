@@ -136,15 +136,15 @@ export function draw3DTextTimeout(config?: Config): void {
 }
 
 
-async function testDraw() {
-  const config = {
-    x: -1377.514282266,
-    y: -2852.64941406,
-    z: 13.9448,
-    text: 'Test',
-    radius: 15,
-  }
-  draw3DTextTimeout(config);
-}
+// async function testDraw() {
+//   const config = {
+//     x: -1377.514282266,
+//     y: -2852.64941406,
+//     z: 13.9448,
+//     text: 'Test',
+//     radius: 15,
+//   }
+//   draw3DTextTimeout(config);
+// }
 
-RegisterCommand('draw', testDraw, false);
+// RegisterCommand('draw', testDraw, false);
