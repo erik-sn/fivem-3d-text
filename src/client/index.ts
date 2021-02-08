@@ -86,7 +86,7 @@ export function Draw3DTextPermanent(config?: Config): void {
   const _config = {...DEFAULT_CONFIG, ...config};
   const { x, y, z, radius } = _config;
 
-  let _interval = 0;
+  let _interval = MIN_BACKOFF_TIME;
   let _retryCount = 0;
   let _previousDistanceToTarget = 0;
   let _distanceToTarget = 0;
@@ -99,6 +99,7 @@ export function Draw3DTextPermanent(config?: Config): void {
 
     _previousDistanceToTarget = _distanceToTarget;
     _distanceToTarget = getDistanceToTarget(x, y, z, radius);
+    console.log(_interval, _distanceToTarget);
     const isWithinRange = _distanceToTarget <= radius;
     if (!isWithinRange) {
       _interval = getRetryTime(_interval, radius, _distanceToTarget, _previousDistanceToTarget, _retryCount);
