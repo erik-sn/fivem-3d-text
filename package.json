@@ -1,10 +1,10 @@
 {
-  "name": "fivem-ts-boilerplate",
-  "version": "2.1.1",
-  "description": "Typescript Boilerplate for FiveM",
+  "name": "fivem-3d-text",
+  "version": "0.1.0",
+  "description": "3D text libary for fivem",
   "main": "index.js",
-  "repository": "https://github.com/d0p3t/fivem-ts-boilerplate",
-  "author": "d0p3t <d0p3t@users.noreply.github.com>",
+  "repository": "https://github.com/erik-sn/fivem-3d-text",
+  "author": "erik-sn",
   "scripts": {
     "build": "webpack --mode production",
     "format": "prettier --write \"src/**/*.ts\"",
