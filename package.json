@@ -2,7 +2,8 @@
   "name": "fivem-3d-text",
   "version": "0.1.0",
   "description": "3D text libary for fivem",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "repository": "https://github.com/erik-sn/fivem-3d-text",
   "author": "erik-sn",
   "scripts": {
@@ -13,12 +14,11 @@
   },
   "license": "MIT",
   "private": false,
-  "dependencies": {
+  "dependencies": {},
+  "devDependencies": {
     "@citizenfx/client": "^1.0.2792-1",
     "@citizenfx/server": "^1.0.2792-1",
-    "@types/node": "^14.0.27"
-  },
-  "devDependencies": {
+    "@types/node": "^14.0.27",
     "@typescript-eslint/eslint-plugin": "^3.8.0",
     "@typescript-eslint/parser": "^2.34.0",
     "eslint": "^7.6.0",

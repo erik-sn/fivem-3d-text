@@ -56,31 +56,6 @@ function getRetryTime(currentInterval, radius, distance, previousDistance, retry
   return newInterval > MAX_BACKOFF_TIME ? MAX_BACKOFF_TIME : newInterval;
 }
 
-function draw3DText(config: Config) {
-  const { x, y, z, font, rgb, textOutline, text, perspectiveScale, scaleMultiplier } = config;
-  const [onScreen, _x, _y] = World3dToScreen2d(x, y, z);
-  if (!onScreen) return;
-
-  const [p_x, p_y, p_z] = GetGameplayCamCoords();
-  const distance = GetDistanceBetweenCoords(p_x, p_y, p_z, x, y, z, true);
-
-  const fov = (1 / GetGameplayCamFov()) * 75;
-  const scale = (1 / distance) * perspectiveScale * fov * scaleMultiplier;
-
-  
-  SetTextScale(0.0, scale)
-  SetTextFont(font)
-  SetTextProportional(true)
-  SetTextColour(rgb[0], rgb[1], rgb[2], 255)
-  if (textOutline) {
-    SetTextOutline()
-  }
-  SetTextEntry("STRING")
-  SetTextCentre(true)
-  AddTextComponentString(text)
-  DrawText(_x, _y)
-}
-
 async function setDelay(interval): Promise<number> {
   if (interval > 0) {
     await delay(interval);
@@ -126,6 +101,30 @@ function draw3DTextLoop(config?: Config, useTimeout = false): void {
   });
 }
 
+export function draw3DText(config: Config) {
+  const { x, y, z, font, rgb, textOutline, text, perspectiveScale, scaleMultiplier } = config;
+  const [onScreen, _x, _y] = World3dToScreen2d(x, y, z);
+  if (!onScreen) return;
+
+  const [p_x, p_y, p_z] = GetGameplayCamCoords();
+  const distance = GetDistanceBetweenCoords(p_x, p_y, p_z, x, y, z, true);
+
+  const fov = (1 / GetGameplayCamFov()) * 75;
+  const scale = (1 / distance) * perspectiveScale * fov * scaleMultiplier;
+
+  
+  SetTextScale(0.0, scale)
+  SetTextFont(font)
+  SetTextProportional(true)
+  SetTextColour(rgb[0], rgb[1], rgb[2], 255)
+  if (textOutline) {
+    SetTextOutline()
+  }
+  SetTextEntry("STRING")
+  SetTextCentre(true)
+  AddTextComponentString(text)
+  DrawText(_x, _y)
+}
 
 export function draw3DTextPermanent(config?: Config): void {
   return draw3DTextLoop(config);

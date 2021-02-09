@@ -36,7 +36,7 @@ const index = {
     extensions: ['.tsx', '.ts', '.js'],
   },
   output: {
-    filename: '[contenthash].index.js',
+    filename: 'index.js',
     path: path.resolve(buildPath),
   },
 };
