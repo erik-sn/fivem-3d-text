@@ -30,7 +30,7 @@ Name | Type | Description |
 
 **Returns:** *void*
 
-Defined in: index.ts:157
+Defined in: index.ts:166
 
 ___
 
@@ -49,7 +49,7 @@ Name | Type | Description |
 
 **Returns:** *void*
 
-Defined in: index.ts:187
+Defined in: index.ts:195
 
 ___
 
@@ -69,4 +69,4 @@ Name | Type | Description |
 
 **Returns:** *void*
 
-Defined in: index.ts:197
+Defined in: index.ts:205

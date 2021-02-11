@@ -4,7 +4,7 @@ A Javascript based package for 3D text helpers roughly based on the Lua package 
 
 Created based on [fivem-ts-boilerplate](https://github.com/d0p3t/fivem-ts-boilerplate) repo.
 
-In addition to the functions implemented this package implements a rudimentary [exponential backoff algorithm](https://en.wikipedia.org/wiki/Exponential_backoff) so that the client does not needlessly perform the distance logic over and over. It will instead try to update the retry interval based on the distance from the text coordinates. This should result in better performance by *only checking distance frequently when the player is close to the text coordinates* and otherwise increasing the retry interval when we are further away.
+In addition to the functions implemented this package implements a rudimentary [exponential backoff algorithm](https://en.wikipedia.org/wiki/Exponential_backoff) so that the client does not needlessly perform the distance logic over and over. It will instead try to update the retry interval based on the distance from the text coordinates. This should result in better performance by **only checking distance frequently when the player is close to the text coordinates** and otherwise increasing the retry interval when we are further away.
 
 There may be some edge cases with very large or very small radii in which this has unexpected results.
 
@@ -44,8 +44,8 @@ RegisterCommand('draw', testDraw, false);
 
 # Development
 
-Prerequisites for development are [node LTS](https://nodejs.org/en/about/releases/).
+Prerequisites for development are [node LTS](https://nodejs.org/en/about/releases/) and a [working fivem server](https://docs.fivem.net/docs/server-manual/setting-up-a-server/) locally.
 
-To watch the code and reload file changes run `npm run watch`.
+Clone this repository into your server location and add `fivem-3d-text` to your server configuration. To watch the code and reload file changes run `npm run watch`.
 
 To build the final package with optimizations run `npm run build`.

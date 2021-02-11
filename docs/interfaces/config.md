@@ -84,7 +84,7 @@ ___
 
 text string to display
 
-Defined in: index.ts:31
+Defined in: index.ts:30
 
 ___
 
@@ -116,7 +116,7 @@ ___
 
 x coordinate to spawn the 3D text at
 
-Defined in: index.ts:25
+Defined in: index.ts:24
 
 ___
 
@@ -126,7 +126,7 @@ ___
 
 y coordinate to spawn the 3D text at
 
-Defined in: index.ts:27
+Defined in: index.ts:26
 
 ___
 
@@ -136,4 +136,4 @@ ___
 
 z coordinate to spawn the 3D text at
 
-Defined in: index.ts:29
+Defined in: index.ts:28
