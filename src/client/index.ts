@@ -9,7 +9,7 @@ interface DefaultConfig {
 }
 
 
-interface Config extends DefaultConfig {
+export interface Config extends DefaultConfig {
   x: number;
   y: number;
   z: number;
@@ -134,6 +134,8 @@ export function draw3DTextTimeout(config?: Config): void {
   return draw3DTextLoop(config, true);
 }
 
+
+// debug
 
 // async function testDraw() {
 //   const config = {
