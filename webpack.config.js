@@ -5,7 +5,7 @@ const RemovePlugin = require('remove-files-webpack-plugin');
 const buildPath = path.resolve(__dirname, 'dist');
 
 const index = {
-  entry: './src/client/index.ts',
+  entry: './src/index.ts',
   module: {
     rules: [
       {
