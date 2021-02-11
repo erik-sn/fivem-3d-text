@@ -28,6 +28,7 @@
     "remove-files-webpack-plugin": "^1.4.3",
     "ts-loader": "^8.0.2",
     "typedoc": "^0.20.24",
+    "typedoc-plugin-markdown": "^3.4.5",
     "typescript": "^3.9.7",
     "webpack": "^4.44.1",
     "webpack-cli": "^3.3.12"

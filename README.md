@@ -8,11 +8,11 @@ There may be some edge cases with very large or very small radii in which this h
 
 # Installation
 
-`npm install --save fivem-3d-text
+`npm install --save fivem-3d-text`
 
 # Documentation
 
-This package is developed in TypeScript. [Please see the full documentation here](./docs/index.html).
+This package is developed in TypeScript. [Please see the full documentation here](./docs/README.md).
 
 # Development
 
