@@ -10,9 +10,33 @@ There may be some edge cases with very large or very small radii in which this h
 
 `npm install --save fivem-3d-text`
 
-# Documentation
+# Usage
 
-This package is developed in TypeScript. [Please see the full documentation here](./docs/README.md).
+There are two primary function:
+
+[`draw3DTextPermanent`](https://github.com/erik-sn/fivem-3d-text/blob/master/docs/modules.md#draw3dtextpermanent) - draws text that will be visible as long as the player is in range.
+
+[`draw3DTextTimeout`](https://github.com/erik-sn/fivem-3d-text/blob/master/docs/modules.md#draw3dtexttimeout) - draws text that will dissapear after the specified timeout.
+
+[See the full documentation here](./docs/modules.md).
+## Examples:
+
+```
+import { draw3DTextPermanent } from 'fivem-3d-text'
+
+async function testDraw() {
+  const config = {
+    x: -1377.514282266, // at the airport
+    y: -2852.64941406,
+    z: 13.9448,
+    text: 'Test',
+    radius: 15,
+  }
+  draw3DTextPermanent(config);
+}
+
+RegisterCommand('draw', testDraw, false);
+```
 
 # Development
 

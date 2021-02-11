@@ -98,7 +98,7 @@ function getRetryTime(
   return newInterval > MAX_BACKOFF_TIME ? MAX_BACKOFF_TIME : newInterval;
 }
 
-async function setDelay(interval): Promise<number> {
+async function setDelay(interval: number): Promise<number> {
   if (interval > 0) {
     await delay(interval);
     return 1;
