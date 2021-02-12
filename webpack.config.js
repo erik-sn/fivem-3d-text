@@ -36,6 +36,7 @@ const index = {
     extensions: ['.tsx', '.ts', '.js'],
   },
   output: {
+    libraryTarget: 'commonjs',
     filename: 'index.js',
     path: path.resolve(buildPath),
   },

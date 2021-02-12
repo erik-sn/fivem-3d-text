@@ -46,4 +46,9 @@ export declare function draw3DTextPermanent(config?: Config): void;
  * @param config - Configuration object
  */
 export declare function draw3DTextTimeout(config?: Config): void;
-export {};
+declare const _default: {
+    draw3DText: typeof draw3DText;
+    draw3DTextPermanent: typeof draw3DTextPermanent;
+    draw3DTextTimeout: typeof draw3DTextTimeout;
+};
+export default _default;

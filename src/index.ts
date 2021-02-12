@@ -220,3 +220,5 @@ export function draw3DTextTimeout(config?: Config): void {
 // }
 
 // RegisterCommand('draw', testDraw, false);
+
+export default { draw3DText, draw3DTextPermanent, draw3DTextTimeout};
