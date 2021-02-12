@@ -4,7 +4,7 @@ A Javascript based package for 3D text helpers roughly based on the Lua package 
 
 Created based on [fivem-ts-boilerplate](https://github.com/d0p3t/fivem-ts-boilerplate) repo.
 
-![](https://gfycat.com/blaringhandsomechinesecrocodilelizard)
+![demo](./img/GmX8rw1P0h.gif)
 
 In addition to the functions implemented this package implements a rudimentary [exponential backoff algorithm](https://en.wikipedia.org/wiki/Exponential_backoff) so that the client does not needlessly perform the distance logic over and over. It will instead try to update the retry interval based on the distance from the text coordinates. This should result in better performance by **only checking distance frequently when the player is close to the text coordinates** and otherwise increasing the retry interval when we are further away.
 
