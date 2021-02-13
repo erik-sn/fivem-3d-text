@@ -8,11 +8,29 @@
 
 - [Config](interfaces/config.md)
 
+### Properties
+
+- [default](modules.md#default)
+
 ### Functions
 
 - [draw3DText](modules.md#draw3dtext)
 - [draw3DTextPermanent](modules.md#draw3dtextpermanent)
 - [draw3DTextTimeout](modules.md#draw3dtexttimeout)
+
+## Properties
+
+### default
+
+• **default**: { `draw3DText`: (`config`: [*Config*](interfaces/config.md)) => *void* ; `draw3DTextPermanent`: (`config?`: [*Config*](interfaces/config.md)) => *void* ; `draw3DTextTimeout`: (`config?`: [*Config*](interfaces/config.md)) => *void*  }
+
+#### Type declaration:
+
+Name | Type |
+------ | ------ |
+`draw3DText` | (`config`: [*Config*](interfaces/config.md)) => *void* |
+`draw3DTextPermanent` | (`config?`: [*Config*](interfaces/config.md)) => *void* |
+`draw3DTextTimeout` | (`config?`: [*Config*](interfaces/config.md)) => *void* |
 
 ## Functions
 

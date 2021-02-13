@@ -27,10 +27,10 @@ const index = {
           path.resolve(buildPath)
         ]
       }
-    })
+    }),
   ],
   optimization: {
-    minimize: true,
+    minimize: false,
   },
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],

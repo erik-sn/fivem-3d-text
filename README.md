@@ -12,10 +12,11 @@ There may be some edge cases with very large or very small radii in which this h
 
 # Installation
 
-It is reccomended to not install this on your fivem server directly but rather add it as a dependency in your JavaScript package using npm.
+The preferred method is to use a standard JavaScript or TypeScript environment and install with `npm`:
 
 `npm install --save fivem-3d-text`
 
+If you are using Lua or C# you can utilize this package through the [`exports`](https://docs.fivem.net/docs/scripting-reference/runtimes/javascript/functions/exports/) object to utilize them. To "install" in this method just clone this repository into your `server-data` folder and add `fivem-3d-text` to your server configuration.
 # Usage
 
 There are two primary function:
@@ -42,6 +43,12 @@ async function testDraw() {
 }
 
 RegisterCommand('draw', testDraw, false);
+```
+
+Or if using the [`exports`](https://docs.fivem.net/docs/scripting-reference/runtimes/javascript/functions/exports/) object:
+
+```
+exports.motiontext:Draw3DTextPermanent(...configuration)
 ```
 
 # Development

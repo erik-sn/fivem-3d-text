@@ -206,19 +206,38 @@ export function draw3DTextTimeout(config?: Config): void {
   return draw3DTextLoop(config, true);
 }
 
+async function configureExports() {
+  // from this thread: https://forum.cfx.re/t/issues-when-calling-exported-client-function/170537/7
+  // make sure the first server tick happens before we load these exports
+  await delay(500);
+  const _export = global.exports;
+  _export('draw3DTextPermanent', (config: Config) => {
+    draw3DTextPermanent(config);
+  });
+
+  _export('draw3DTextTimeout', (config: Config) => {
+    draw3DTextTimeout(config);
+  });
+
+  _export('draw3DText', (config: Config) => {
+    draw3DText(config);
+  });
+}
+
+configureExports();
 // debug
 
-// async function testDraw() {
-//   const config = {
-//     x: -1377.514282266,
-//     y: -2852.64941406,
-//     z: 13.9448,
-//     text: 'Test',
-//     radius: 15,
-//   }
-//   draw3DTextTimeout(config);
-// }
+async function testDraw() {
+  const config = {
+    x: -1377.514282266,
+    y: -2852.64941406,
+    z: 13.9448,
+    text: 'Test',
+    radius: 15,
+  }
+  draw3DTextTimeout(config);
+}
 
-// RegisterCommand('draw', testDraw, false);
+RegisterCommand('draw', testDraw, false);
 
 export default { draw3DText, draw3DTextPermanent, draw3DTextTimeout};
