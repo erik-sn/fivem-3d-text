@@ -12,9 +12,12 @@ There may be some edge cases with very large or very small radii in which this h
 
 # Installation
 
+## Node
 The preferred method is to use a standard JavaScript or TypeScript environment and install with `npm`:
 
 `npm install --save fivem-3d-text`
+
+## fivem 
 
 If you are using Lua or C# you can utilize this package through the [`exports`](https://docs.fivem.net/docs/scripting-reference/runtimes/javascript/functions/exports/) object to utilize them. To "install" in this method just clone this repository into your `server-data` folder and add `fivem-3d-text` to your server configuration.
 # Usage
@@ -27,6 +30,8 @@ There are two primary function:
 
 Check [the configuration options here](https://github.com/erik-sn/fivem-3d-text/blob/master/docs/interfaces/config.md#properties) and [the full documentation here](./docs/modules.md).
 ## Examples:
+
+### Node
 
 ```
 import { draw3DTextPermanent } from 'fivem-3d-text'
@@ -45,7 +50,9 @@ async function testDraw() {
 RegisterCommand('draw', testDraw, false);
 ```
 
-Or if using the [`exports`](https://docs.fivem.net/docs/scripting-reference/runtimes/javascript/functions/exports/) object:
+### exports
+
+If using the [`exports`](https://docs.fivem.net/docs/scripting-reference/runtimes/javascript/functions/exports/) object:
 
 ```
 exports.motiontext:Draw3DTextPermanent(...configuration)
