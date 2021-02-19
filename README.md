@@ -10,7 +10,7 @@ Created based on [fivem-ts-boilerplate](https://github.com/d0p3t/fivem-ts-boiler
 
 In addition to the functions implemented this package implements a distance base interval retry so that the client does not needlessly perform the distance logic over and over. It will instead try to update the retry interval based on the distance from the text coordinates. This should result in better performance by **only checking distance frequently when the player is close to the text coordinates** and otherwise increasing the retry interval when we are further away.
 
-Plot of distance vs. interval:
+Plot of distance vs. interval [(source)](https://docs.google.com/spreadsheets/d/1t_7QG1YB0XhuyBDTrLYqZNL4z7LfUN0HZoCKPKf-WSY/edit#gid=2147061935):
 
 ![plot](./img/distance_vs_interval.png)
 
