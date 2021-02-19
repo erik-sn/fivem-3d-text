@@ -102,11 +102,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.draw3DTextTimeout = exports.draw3DTextPermanent = exports.draw3DText = void 0;
 // constants related to the retry backoffs
-const INTERVAL_INCREMENT = 50;
-const MIN_SCALE_FACTOR = 100;
-const MAX_SCALE_FACTOR = 10000;
+// see plot with these constants here: https://docs.google.com/spreadsheets/d/1t_7QG1YB0XhuyBDTrLYqZNL4z7LfUN0HZoCKPKf-WSY/edit#gid=2147061935
+const SCALING_CONSTANT = 0.063;
+const EXPONENTIAL_CONSTANT = 1.4;
+const DISTANCE_SAFETY_FACTOR = 1.25;
+const DISTANCE_CEILING = 25000;
 const MIN_BACKOFF_TIME = 500;
-const MAX_BACKOFF_TIME = 15000;
+const MAX_BACKOFF_TIME = 30000;
 const DEFAULT_CONFIG = {
     rgb: [255, 255, 255],
     textOutline: true,
@@ -128,45 +130,18 @@ function getDistanceToTarget(x, y, z) {
     return Vdist2(playerX, playerY, playerZ, x, y, z);
 }
 /**
- * Determine if we are increasing or decreasing in distance and
- * returns a value to change the next retry time by
- * @param distanceDelta - the difference in distance between previous and current
- * retry iteration
- */
-function getRetryIncrement(distanceDelta) {
-    if (distanceDelta > 3)
-        return INTERVAL_INCREMENT;
-    if (distanceDelta < 0)
-        return -INTERVAL_INCREMENT;
-    return 0;
-}
-/**
  * Get the next retry interval based on current paramters
- * @param currentInterval - current interval in time
  * @param radius - radius set for this 3D text
  * @param distance - current distance from the target
- * @param previousDistance - previous distance from the target
- * @param retryCount - current retry count
  */
-function getRetryTime(currentInterval, radius, distance, previousDistance, retryCount) {
-    const scaleFactor = distance / radius;
-    if (scaleFactor > MAX_SCALE_FACTOR)
+function getRetryIntervalTime(radius, distance) {
+    if (distance > DISTANCE_CEILING)
         return MAX_BACKOFF_TIME; // we're very far away now
-    if (scaleFactor < MIN_SCALE_FACTOR)
+    if (distance < radius * DISTANCE_SAFETY_FACTOR)
         return MIN_BACKOFF_TIME; // we're relatively close
-    const retryFactor = retryCount >= 10 ? 10 : retryCount; // exponentially increase as we change
-    const delta = distance - previousDistance;
-    const newInterval = currentInterval + retryFactor * getRetryIncrement(delta);
-    return newInterval > MAX_BACKOFF_TIME ? MAX_BACKOFF_TIME : newInterval;
-}
-function setDelay(interval) {
-    return __awaiter(this, void 0, void 0, function* () {
-        if (interval > 0) {
-            yield delay(interval);
-            return 1;
-        }
-        return 0;
-    });
+    // new retry interval as a function of distance.
+    const newInterval = MIN_BACKOFF_TIME + (Math.pow((distance * SCALING_CONSTANT), EXPONENTIAL_CONSTANT));
+    return newInterval;
 }
 /**
  * Base control loop for determining if the 3D text should be visible
@@ -180,33 +155,30 @@ function draw3DTextLoop(config, useTimeout = false) {
     const _config = Object.assign(Object.assign({}, DEFAULT_CONFIG), config);
     const { x, y, z, radius } = _config;
     let interval = MIN_BACKOFF_TIME;
-    let retryCount = 0;
-    let previousDistanceToTarget = 0;
     let distanceToTarget = 0;
+    let withinRange = false;
     let timeoutFinished = false;
-    setTick(() => __awaiter(this, void 0, void 0, function* () {
-        previousDistanceToTarget = distanceToTarget;
-        distanceToTarget = getDistanceToTarget(x, y, z);
-        if (distanceToTarget >= radius) {
-            // we're out of range
-            interval = getRetryTime(interval, radius, distanceToTarget, previousDistanceToTarget, retryCount);
-            retryCount += yield setDelay(interval);
-            if (timeoutFinished === true) {
-                timeoutFinished = false;
-            }
+    // loop to check if we are in range and render the text
+    const loopTick = setTick(() => __awaiter(this, void 0, void 0, function* () {
+        if (useTimeout && timeoutFinished) {
+            clearTick(loopTick);
+            return;
         }
-        else {
-            // we're in range
-            interval = 0;
-            retryCount = 0;
+        ;
+        distanceToTarget = getDistanceToTarget(x, y, z);
+        withinRange = distanceToTarget <= radius;
+        if (withinRange) {
+            interval = MIN_BACKOFF_TIME;
+            draw3DText(_config);
             if (useTimeout) {
-                if (timeoutFinished)
-                    return;
                 setTimeout(() => {
                     timeoutFinished = true;
                 }, _config.timeout);
             }
-            draw3DText(_config);
+        }
+        else {
+            interval = getRetryIntervalTime(radius, distanceToTarget);
+            yield delay(interval);
         }
     }));
 }
@@ -247,14 +219,16 @@ function draw3DTextPermanent(config) {
 exports.draw3DTextPermanent = draw3DTextPermanent;
 /**
  * Draw text based on the input configuration. After the specified
- * timeout the text will disappear until the player walks out of and
- * back into range.
+ * timeout the text will disappear.
  * @param config - Configuration object
  */
 function draw3DTextTimeout(config) {
     return draw3DTextLoop(config, true);
 }
 exports.draw3DTextTimeout = draw3DTextTimeout;
+// function configureExports() {
+//   return 1;
+// }
 function configureExports() {
     return __awaiter(this, void 0, void 0, function* () {
         // from this thread: https://forum.cfx.re/t/issues-when-calling-exported-client-function/170537/7
@@ -273,20 +247,6 @@ function configureExports() {
     });
 }
 configureExports();
-// debug
-function testDraw() {
-    return __awaiter(this, void 0, void 0, function* () {
-        const config = {
-            x: -1377.514282266,
-            y: -2852.64941406,
-            z: 13.9448,
-            text: 'Test',
-            radius: 15,
-        };
-        draw3DTextTimeout(config);
-    });
-}
-RegisterCommand('draw', testDraw, false);
 exports.default = { draw3DText, draw3DTextPermanent, draw3DTextTimeout };
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(1)))

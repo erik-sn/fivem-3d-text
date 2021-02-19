@@ -48,7 +48,7 @@ Name | Type | Description |
 
 **Returns:** *void*
 
-Defined in: index.ts:166
+Defined in: index.ts:128
 
 ___
 
@@ -67,7 +67,7 @@ Name | Type | Description |
 
 **Returns:** *void*
 
-Defined in: index.ts:195
+Defined in: index.ts:157
 
 ___
 
@@ -76,8 +76,7 @@ ___
 ▸ **draw3DTextTimeout**(`config?`: [*Config*](interfaces/config.md)): *void*
 
 Draw text based on the input configuration. After the specified
-timeout the text will disappear until the player walks out of and
-back into range.
+timeout the text will disappear.
 
 #### Parameters:
 
@@ -87,4 +86,4 @@ Name | Type | Description |
 
 **Returns:** *void*
 
-Defined in: index.ts:205
+Defined in: index.ts:166

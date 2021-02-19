@@ -41,8 +41,7 @@ export declare function draw3DText(config: Config): void;
 export declare function draw3DTextPermanent(config?: Config): void;
 /**
  * Draw text based on the input configuration. After the specified
- * timeout the text will disappear until the player walks out of and
- * back into range.
+ * timeout the text will disappear.
  * @param config - Configuration object
  */
 export declare function draw3DTextTimeout(config?: Config): void;

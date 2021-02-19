@@ -31,11 +31,13 @@ export interface Config extends DefaultConfig {
 }
 
 // constants related to the retry backoffs
-const INTERVAL_INCREMENT = 50;
-const MIN_SCALE_FACTOR = 100;
-const MAX_SCALE_FACTOR = 10000;
+// see plot with these constants here: https://docs.google.com/spreadsheets/d/1t_7QG1YB0XhuyBDTrLYqZNL4z7LfUN0HZoCKPKf-WSY/edit#gid=2147061935
+const SCALING_CONSTANT = 0.063;
+const EXPONENTIAL_CONSTANT = 1.4;
+const DISTANCE_SAFETY_FACTOR = 1.25;
+const DISTANCE_CEILING = 25000;
 const MIN_BACKOFF_TIME = 500;
-const MAX_BACKOFF_TIME = 15000;
+const MAX_BACKOFF_TIME = 30000;
 
 const DEFAULT_CONFIG: DefaultConfig = {
   rgb: [255, 255, 255],
@@ -61,48 +63,17 @@ function getDistanceToTarget(x: number, y: number, z: number): number {
 }
 
 /**
- * Determine if we are increasing or decreasing in distance and
- * returns a value to change the next retry time by
- * @param distanceDelta - the difference in distance between previous and current
- * retry iteration
- */
-function getRetryIncrement(distanceDelta: number): number {
-  if (distanceDelta > 3) return INTERVAL_INCREMENT;
-  if (distanceDelta < 0) return -INTERVAL_INCREMENT;
-  return 0;
-}
-
-/**
  * Get the next retry interval based on current paramters
- * @param currentInterval - current interval in time
  * @param radius - radius set for this 3D text
  * @param distance - current distance from the target
- * @param previousDistance - previous distance from the target
- * @param retryCount - current retry count
  */
-function getRetryTime(
-  currentInterval: number,
-  radius: number,
-  distance: number,
-  previousDistance: number,
-  retryCount: number,
-): number {
-  const scaleFactor = distance / radius;
-  if (scaleFactor > MAX_SCALE_FACTOR) return MAX_BACKOFF_TIME; // we're very far away now
-  if (scaleFactor < MIN_SCALE_FACTOR) return MIN_BACKOFF_TIME; // we're relatively close
-
-  const retryFactor = retryCount >= 10 ? 10 : retryCount; // exponentially increase as we change
-  const delta = distance - previousDistance;
-  const newInterval = currentInterval + retryFactor * getRetryIncrement(delta);
-  return newInterval > MAX_BACKOFF_TIME ? MAX_BACKOFF_TIME : newInterval;
-}
-
-async function setDelay(interval: number): Promise<number> {
-  if (interval > 0) {
-    await delay(interval);
-    return 1;
-  }
-  return 0;
+function getRetryIntervalTime(radius: number, distance: number): number {
+  if (distance > DISTANCE_CEILING) return MAX_BACKOFF_TIME; // we're very far away now
+  if (distance < radius * DISTANCE_SAFETY_FACTOR) return MIN_BACKOFF_TIME; // we're relatively close
+  
+  // new retry interval as a function of distance.
+  const newInterval = MIN_BACKOFF_TIME + ((distance * SCALING_CONSTANT) ** EXPONENTIAL_CONSTANT);
+  return newInterval;
 }
 
 /**
@@ -118,42 +89,33 @@ function draw3DTextLoop(config?: Config, useTimeout = false): void {
   const { x, y, z, radius } = _config;
 
   let interval = MIN_BACKOFF_TIME;
-  let retryCount = 0;
-  let previousDistanceToTarget = 0;
   let distanceToTarget = 0;
 
+  let withinRange = false;
   let timeoutFinished = false;
 
-  setTick(
+  // loop to check if we are in range and render the text
+  const loopTick = setTick(
     async (): Promise<void> => {
-      previousDistanceToTarget = distanceToTarget;
+      if (useTimeout && timeoutFinished) {
+        clearTick(loopTick);
+        return;
+      };
+  
       distanceToTarget = getDistanceToTarget(x, y, z);
-      if (distanceToTarget >= radius) {
-        // we're out of range
-        interval = getRetryTime(
-          interval,
-          radius,
-          distanceToTarget,
-          previousDistanceToTarget,
-          retryCount,
-        );
-        retryCount += await setDelay(interval);
-        if (timeoutFinished === true) {
-          timeoutFinished = false;
-        }
-      } else {
-        // we're in range
-        interval = 0;
-        retryCount = 0;
-
+      withinRange = distanceToTarget <= radius;
+  
+      if (withinRange) {
+        interval = MIN_BACKOFF_TIME;
+        draw3DText(_config);
         if (useTimeout) {
-          if (timeoutFinished) return;
           setTimeout(() => {
             timeoutFinished = true;
           }, _config.timeout);
         }
-
-        draw3DText(_config);
+      } else {
+        interval = getRetryIntervalTime(radius, distanceToTarget);
+        await delay(interval);
       }
     },
   );
@@ -198,13 +160,17 @@ export function draw3DTextPermanent(config?: Config): void {
 
 /**
  * Draw text based on the input configuration. After the specified
- * timeout the text will disappear until the player walks out of and
- * back into range.
+ * timeout the text will disappear.
  * @param config - Configuration object
  */
 export function draw3DTextTimeout(config?: Config): void {
   return draw3DTextLoop(config, true);
 }
+
+
+// function configureExports() {
+//   return 1;
+// }
 
 async function configureExports() {
   // from this thread: https://forum.cfx.re/t/issues-when-calling-exported-client-function/170537/7
@@ -225,19 +191,5 @@ async function configureExports() {
 }
 
 configureExports();
-// debug
-
-async function testDraw() {
-  const config = {
-    x: -1377.514282266,
-    y: -2852.64941406,
-    z: 13.9448,
-    text: 'Test',
-    radius: 15,
-  }
-  draw3DTextTimeout(config);
-}
-
-RegisterCommand('draw', testDraw, false);
 
 export default { draw3DText, draw3DTextPermanent, draw3DTextTimeout};
